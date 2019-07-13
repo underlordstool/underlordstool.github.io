@@ -185,10 +185,12 @@
             function moveHero(id){
                 for (let p of Object.values(players)){
                     for (let h of p){
-                        if (h.position == "board"){
-                            h.position = "bench";
-                        } else {
-                            h.position = "board"
+                        if (h.id == id){
+                            if (h.position == "board"){
+                                h.position = "bench";
+                            } else {
+                                h.position = "board"
+                            }
                         }
                     }
                 }
