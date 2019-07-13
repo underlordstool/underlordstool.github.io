@@ -1,0 +1,601 @@
+<html>
+    <head>
+
+        <script src="js/jquery.min.js"></script>
+        <!--<script>
+            $(document).ready(function(){
+ 
+            })
+        </script>-->
+        <script>
+
+            const _copiesInPool = [45,30,25,15,10]
+            const _tierOdds = [[100,0,0,0,0],[70,30,0,0,0],[60,35,5,0,0],[50,35,15,0,0],[40,35,23,2,0],[33,30,30,7,0],[30,30,30,10,0],[24,30,30,15,1],[22,25,30,20,3],[19,25,25,25,6],[13,20,25,30,12]]
+            const _totalPoolSize = [630,420,375,180,50]
+            const _heroes = {
+                "ANTI-MAGE" : {name:"ANTI-MAGE",tier:1,alliance:["Demon-Hunter"]},
+                "AXE" :  {name:"AXE",tier:1,alliance:["Brawny","Warrior"]},
+                "BATRIDER" :  {name:"BATRIDER",tier:1,alliance:["Troll","Knight"]},
+                "BLOODSEEKER" : {name: "BLOODSEEKER",tier:1,alliance:["Human","Assassin"]},
+                "BOUNTY_HUNTER" : {name: "BOUNTY_HUNTER",tier:1,alliance:["Scrappy","Assassin"]},
+                "CLOCKWERK" : {name: "CLOCKWERK",tier:1,alliance:["Scrappy","Inventor"]},
+                "DROW_RANGER" : {name: "DROW_RANGER",tier:1,alliance:["Heartless","Hunter"]},
+                "ENCHANTRESS" : {name: "ENCHANTRESS",tier:1,alliance:["Savage","Druid"]},
+                "OGRE_MAGI" : {name: "OGRE_MAGI",tier:1,alliance:["Bloodbound","Mage"]},
+                "SHADOW_SHAMAN" : {name: "SHADOW_SHAMAN",tier:1,alliance:["Troll","Shaman"]},
+                "TINKER" : {name: "TINKER",tier:1,alliance:["Scrappy","Inventor"]},
+                "TUSK" : {name: "TUSK",tier:1,alliance:["Savage","Warrior"]},
+                "TINY" : {name: "TINY",tier:1,alliance:["Primordial","Warrior"]},
+                "WARLOCK" : {name: "WARLOCK",tier:1,alliance:["Bloodbound","Warlock"]},
+
+
+                "BEASTMASTER" : {name: "BEASTMASTER",tier:2,alliance:["Brawny","Hunter"]},
+                "CHAOS_KNIGHT" : {name: "CHAOS_KNIGHT",tier:2,alliance:["Demon","Knight"]},
+                "CRYSTAL_MAIDEN" : {name: "CRYSTAL_MAIDEN",tier:2,alliance:["Human","Mage"]},
+                "JUGGERNAUT" : {name: "JUGGERNAUT",tier:2,alliance:["Brawny","Warrior"]},
+                "LUNA" : {name: "LUNA",tier:2,alliance:["Elusive","Knight"]},
+                "MORPHLING" : {name: "MORPHLING",tier:2,alliance:["Primordial","Assassin"]},
+                "NATURES_PROPHET": {name:"NATURES_PROPHET",tier:2,alliance:["Elusive","Druid"]},
+                "PUCK":{name:"PUCK",tier:2,alliance:["Elusive","Dragon","Mage"]},
+                "PUDGE":{name:"PUDGE",tier:2,alliance:["Heartless","Warrior"]},
+                "QUEEN_OF_PAIN":{name:"QUEEN_OF_PAIN",tier:2,alliance:["Demon","Assassin"]},
+                "SLARDAR":{name:"SLARDAR",tier:2,alliance:["Scaled","Warrior"]},
+                "TIMBERSAW":{name:"TIMBERSAW",tier:2,alliance:["Scrappy","Inventor"]},
+                "TREANT_PROTECTOR":{name:"TREANT_PROTECTOR",tier:2,alliance:["Elusive","Druid"]},
+                "WITCH_DOCTOR":{name:"WITCH_DOCTOR",tier:2,alliance:["Troll","Warlock"]},
+
+                "ABADDON":{name:"ABADDON",tier:3,alliance:["Heartless","Knight"]},
+                "ARC_WARDEN":{name:"ARC_WARDEN",tier:3,alliance:["Primordial","Shaman"]},
+                "LUNA":{name:"LUNA",tier:3,alliance:["Human","Mage"]},
+                "LYCAN":{name:"LYCAN",tier:3,alliance:["Human","Savage","Warrior"]},
+                "OMNIKNIGHT":{name:"OMNIKNIGHT",tier:3,alliance:["Human","Knight"]},
+                "PHANTOM_ASSASSIN":{name:"PHANTOM_ASSASSIN",tier:3,alliance:["Elusive","Assassin"]},
+                "RAZOR":{name:"RAZOR",tier:3,alliance:["Primordial","Mage"]},
+                "SAND_KING":{name:"SAND_KING",tier:3,alliance:["Savage","Assassin"]},
+                "SHADOW_FIEND":{name:"SHADOW_FIEND",tier:3,alliance:["Demon","Warlock"]},
+                "SLARK":{name:"SLARK",tier:3,alliance:["Primordial","Assassin"]},
+                "SNIPER":{name:"SNIPER",tier:3,alliance:["Deadeye","Hunter"]},
+                "TERROR_BLADE":{name:"TERROR_BLADE",tier:3,alliance:["Demon","Demon-Hunter"]},
+                "VENOMANCER":{name:"VENOMANCER",tier:3,alliance:["Savage","Warlock"]},
+                "WINDRANGER":{name:"WINDRANGER",tier:3,alliance:["Elusive","Hunter"]},
+
+                "ALCHEMIST":{name:"ALCHEMIST",tier:4,alliance:["Scrappy","Warlock"]},
+                "DISRUPTOR":{name:"DISRUPTOR",tier:4,alliance:["Brawny","Shaman","Warlock"]},
+                "DOOM":{name:"DOOM",tier:4,alliance:["Demon","Warrior"]},
+                "DRAGON_KNIGHT":{name:"DRAGON_KNIGHT",tier:4,alliance:["Human","Dragon","Knight"]},
+                "LONE_DRUID":{name:"LONE_DRUID",tier:4,alliance:["Savage","DRUID"]},
+                "KEEPER_OF_THE_LIGHT":{name:"KEEPER_OF_THE_LIGHT",tier:4,alliance:["Human","Mage"]},
+                "KUNKKA":{name:"KUNKKA",tier:4,alliance:["Human","Warrior"]},
+                "MEDUSA":{name:"MEDUSA",tier:4,alliance:["Scaled","Hunter"]},
+                "MIRANA":{name:"MIRANA",tier:4,alliance:["Elusive","Hunter"]},
+                "NECROPHOS":{name:"NECROPHOS",tier:4,alliance:["Heartless","Warlock"]},
+                "TEMPLAR_ASSASSIN":{name:"TEMPLAR_ASSASSIN",tier:4,alliance:["Elusive","Assassin"]},
+                "TROLL_WARLORD":{name:"TROLL_WARLORD",tier:4,alliance:["Troll","Warrior"]},
+
+                "ENIGMA":{name:"ENIGMA",tier:5,alliance:["Primordial","Warlock"]},
+                "GYROCOPTER":{name:"GYROCOPTER",tier:5,alliance:["Deadeye","Inventor"]},
+                "LICH":{name:"LICH",tier:5,alliance:["Heartless","Mage"]},
+                "TECHIES":{name:"TECHIES",tier:5,alliance:["Scrappy","Inventor"]},
+                "TIDEHUNTER":{name:"TIDEHUNTER",tier:5,alliance:["Scaled","Hunter"]},
+            }
+
+            class Hero {
+                constructor(hero,pos){
+                    this.name = hero.name;
+                    this.alliance = hero.alliance;
+                    this.tier = hero.tier;
+                    this.level = 1;
+                    this.position = pos;
+                    this.id = Math.random();
+                }
+            }
+
+            let userLvl = 1;
+            let players= {
+                0: [],1:[],2:[],3:[],4:[],5:[],6:[],7:[]
+            }
+
+            let allally = [];
+
+
+            $(document).ready(function(){
+                init();
+            });
+
+            function init(){
+                render();
+            }
+
+            function render(){
+                mergeHeroes();
+
+                $(".board").html('<table width="100%"> <tr> <th width="6%"> Player </th> <th width="47%"> Roster </th> <th width="47%"> Bench</th></tr> </table>');
+                
+                for (let i = 0; i < 8; i++){
+                    let p = players[i];
+                    $(".board table").append('<tr> <td> <input type="text" value="P'+(i+1)+'" size="1"/> </td> <td class="board'+i+'"> </td> <td class="bench'+i+'"> </td> </tr>')
+                    for (let h of p){
+                        let star = "";
+                        for (let x = 0; x < h.level; x++){
+                            star+= "★"
+                        }
+                        let alliance = "<div class='alliance'>";
+                        for (let a of h.alliance){
+                            alliance+= "<div class='" + a + "'>" + a + "</div>";
+
+                            if (allally.indexOf(a) < 0)
+                                allally.push(a)
+                        }
+                        alliance += "</div>"
+                        $("."+h.position+i).append("<div class='hero own " + h.name + " " + h.alliance.join(" ") + "'><div class='close btn' onclick='sell(" + h.id + ")'>$</div><div class='star btn' onclick='addStar(\"" + h.id + "\")' >"+star+"</div><div class='name'>"+h.name+"</div>" + alliance + " <div class='move-right btn' onclick='moveHero(" + h.id + ")'><-></div></div>");
+
+                    }
+                    $(".board"+i).append('<div class="hero add" onclick="buy('+i+',\'board\')"><div class="star">+</div><div class="name btn">ADD HERO</div></div> ');
+                    $(".bench"+i).append('<div class="hero add" onclick="buy('+i+',\'bench\')"><div class="star">+</div><div class="name btn">ADD HERO</div></div> ');             
+                }
+            }
+
+            function resetShop(){
+                //$(".shop").show();$(".board").hide();
+
+
+                $(".result").html("");
+                for (let h of Object.values(_heroes)){
+                    let alliance = "<div class='alliance'>";
+                    for (let a of h.alliance){
+                        alliance+= "<div class='" + a + "'>" + a + "</div>";
+
+                        if (allally.indexOf(a) < 0)
+                            allally.push(a)
+                    }
+                    alliance += "</div>"
+
+                    let odds = individualOdds(h.name);
+                    let hide0 = "";
+                    if (odds == "0.00%"){
+                        hide0 = "hide0";
+                    }
+
+                    $(".result").append("<div onclick='addHero(\"" + h.name + "\")' class='hero " + h.name + " " + h.alliance.join(" ") + " tier" + h.tier + " " + hide0 +  " '><div class='tier'>TIER "+h.tier+" : " + odds + " </div><div class='name'>"+h.name+"</div>" + alliance + " </div>");
+                }
+                
+                $(".filter-alliance").html("<option value=''>--ANY--</option>");
+                for (let a of allally)
+                    $(".filter-alliance").append("<option class='"+ a +"' value='" + a + "'>"+a+"</option>")
+            
+
+            }
+
+            function addStar(id){
+                for (let p of Object.values(players)){
+                    for (let h of p){
+                        if (h.id == id){
+                            h.level++;
+                            if (h.level >3)
+                                h.level = 1;
+                        }
+                    }
+                }
+                render();
+            }
+
+            function moveHero(id){
+                for (let p of Object.values(players)){
+                    for (let h of p){
+                        if (h.position == "board"){
+                            h.position = "bench";
+                        } else {
+                            h.position = "board"
+                        }
+                    }
+                }
+                render();    
+            }
+
+            function mergeHeroes(){
+                for (let p of Object.values(players)){
+                    let combo = {};
+                    for (let h of p){
+                        let k = h.name+"|"+h.level;
+                        if (combo[k])
+                            combo[k].push(h);
+                        else 
+                            combo[k] = [h];
+                    }
+                    for (let k of Object.keys(combo)){
+                        if (combo[k].length >= 3){
+                            combo[k][0].level++;
+                            sell(combo[k][1].id);
+                            sell(combo[k][2].id);
+                        }
+                    }
+                }
+            }
+
+            function sell(id){
+                for (let p of Object.values(players)){
+                    for (let i = 0; i < p.length; i++){
+                        let h = p[i];
+                        if (h.id == id){
+                            p.splice(i,1);
+                        }
+                    }
+                }
+                render();
+            }
+
+            function addHero(name){
+                let hero = new Hero(_heroes[name],selected_position);
+                players[selected_player].push(hero);
+                $(".ui").toggle();
+                console.log(players);
+                render();
+            }
+
+            function getHitsOutOfPool(hero_name){
+                let hits = 0;
+                for (let p of Object.values(players)){
+                    for (let h of p) {
+                        if (h.name == hero_name)
+                            hits+= (h.level == 1) ? 1 : (h.level-1) * 3;
+                    } 
+
+                }
+                return hits;
+            }
+
+            function getTierHitsOutOfPool(targetTier){
+                let hits = 0;
+                for (let p of Object.values(players)){
+                    for (let h of p){
+                        if (h.tier == targetTier)
+                            hits+= (h.level == 1) ? 1 : (h.level-1) * 3;
+                    }    
+                }
+                return hits;
+            }
+
+            function individualOdds(hero_name){
+                let hero = _heroes[hero_name];
+                
+                let targetTier = hero.tier;
+                let hitsOutOfPool = getHitsOutOfPool(hero_name);
+                let missesOutOfPool = getTierHitsOutOfPool(targetTier) - hitsOutOfPool;
+
+                let oddsOfHittingTier = _tierOdds[userLvl-1][targetTier-1]
+                oddsOfHittingTier = oddsOfHittingTier/100
+
+                console.log(oddsOfHittingTier)
+                
+                my_copiesInPool = _copiesInPool[targetTier-1] - hitsOutOfPool
+                myPoolSize = _totalPoolSize[targetTier-1] - (missesOutOfPool+ hitsOutOfPool)
+
+                console.log(my_copiesInPool + " " + myPoolSize)
+                
+                odds = 5 * (my_copiesInPool/myPoolSize)*oddsOfHittingTier * 100;
+
+                
+                return (odds.toFixed(2) + "%")
+            }
+
+            function changeLevel(level){
+                userLvl = level;
+                resetShop();
+            }
+
+            let filter = {
+                name:null,
+                tier:null,
+                alliance:null,
+            }
+
+            function filterZero(){
+                $(".reset").toggleClass("hide0");
+            }
+
+            function filterResult(prop,val){
+                filter[prop] = val;
+                $(".hero").removeClass('hide');
+                
+                if (filter.name || filter.alliance || filter.tier){
+                    $(".hero").addClass('hide');
+                    let s = ".hero";
+
+                    if (filter.tier){
+                        s += ".tier"+filter.tier;
+                    }
+
+                    if (filter.alliance){
+                        s += "."+filter.alliance;
+                    }
+
+
+                    if (filter.name){
+                        s += "."+filter.name;
+                    }
+
+                    console.log(s);
+                    $(s).removeClass("hide");
+                }
+            }
+
+            function filterReset(){
+                $('.filter .reset').val('');
+                resetShop();
+            }
+
+
+
+            function buy(play,pos){
+                $(".ui").toggle();
+                selected_player = play;
+                selected_position = pos;
+                resetShop();
+            }
+
+        </script>
+
+        <style>
+            /*
+            * {font-family:Arial; font-size: 12px;margin:0;padding:0; background-color: rgb(12,12,12);color: white}
+
+            h1 {font-size: 18px;}
+
+            .board {background-color: rgb(12,12,12);width:310px;height:210;border:5px rgb(0,0,30) solid;margin:0;float:left;}
+            .bench {background-color: rgb(12,12,12);width:310px;height:210;border:5px rgb(0,30,0) solid;margin:0;float:left;}
+
+            .choices {width:600px;height:100%;background-color: black; z-index:10; float: right; position: absolute;right:0;}
+
+
+
+            .hero {width: 60px; height: 100px; padding:0; background-color: rgb(12,12,12);float:left;margin: 1px}
+            .hero .top{height:20px;margin-top: -2px;padding: -4px 0px 2px 0px} 
+             
+            .hero .top .stars{float:left; font-size: 16px;color:orange;} 
+            .hero .top .close{float:right;background: url('images/close.png');background-size: contain; width:14px;height: 14px; margin:4px 1px;}
+            
+            .hero.WHO .top{opacity:0;}
+                                       
+            .hero.none {opacity:0;pointer-event:none;}
+
+
+            .WHO .image{background: url('images/WHO.png');background-size: contain; width: 60px; height: 80px}
+            .ANTI-MAGE .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .AXE .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .BATRIDER .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .BEASTMASTER .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .BLOODSEEKER .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .BOUNTY_HUNTER .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .CLOCKWERK .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            .DROW_RANGER .image{background: url('images/ANTI-MAGE.png');background-size: contain; width: 60px; height: 80px}
+            */
+
+            body{
+                color:white; background-color: #080808;
+            }
+
+            .hero {
+                width:150px;height:50px;font-size: 10.5px; float:left;text-align: center;border-radius: 10px;color:white;background-color:#030303;margin:2px;font-weight: bold;font-family: Arial;
+            }
+
+            .hero .close {float: right; padding: 2px;z-index: 2;cursor:pointer;}
+            .hero .star {font-size: 16px; margin-left: 6px}
+            .hero .alliance {text-align: center; width: 100%;display: flex; justify-content:center;}
+            .hero {color:white!important;}
+            .hero .alliance div{margin: 0px 2px;}
+            .Assassin{color:purple;content:"Assassin";}
+            .Bloodbound{color:green;content:"Bloodbound";}
+            .Brawny{color:red;content:"Brawny";}
+            .Deadeye{color:orange;content:"Deadeye";}
+            .Demon{color:red;content:"Demon";}
+            .Demon-Hunter{color:purple;content:"Demon-Hunter";}
+            .Dragon{color:orange;content:"Dragon";}
+            .Druid{color:green;content:"Druid";}
+            .Elusive{color:aqua;content:"Elusive";}
+            .Heartless{color:green;content:"Heartless";}
+            .Human{color:green;content:"Human";}
+            .Hunter{color:orange;content:"Hunter";}
+            .Inventor{color:orange;content:"Inventor";}
+            .Knight{color:yellow;content:"Knight";}
+            .Mage{color:cyan;content:"Mage";}
+            .Primordial{color:blue;content:"Primordial";}
+            .Savage{color:red;content:"Savage";}
+            .Scaled{color:purple;content:"Scaled";}
+            .Scrappy{color:yellow;content:"Scrappy";}
+            .Shaman{color:green;content:"Shaman";}
+            .Troll{color:brown;content:"Troll";}
+            .Warlock{color:pink;content:"Warlock";}
+            .Warrior{color:blue;content:"Warrior";}
+
+            select, option, input {color:white; background-color: #111;border: 0;outline: none;border-radius: 5px;padding:3px;}
+            input[type='button'] {border: 2px #111 outset; border-radius: 5px;padding:4px;}
+            input[type='button']:hover {border: 2px #111 inset;background-color: #222}
+            
+            .choices .top {width: 100%}
+            .filter {float: right;margin-right: 50px}
+
+            .result .hide0{display:block;}
+            .result.hide0 .hide0{display:none;}
+            
+            .hide{  display:none}
+            .shop{display: none}
+            .board{display: block;}
+
+            .move-right{ float: right; padding:2px; cursor: pointer; top:-32px;position: relative; }
+            .move-left{ float: left;t; padding:2px; cursor: pointer; top:-32px;position: relative; }
+            
+            .btn:hover, .add:hover {cursor: pointer; color:yellow !important;}
+
+            .add .move-left,.add .move-right, .add .close {display: none;}
+
+
+            .board table{
+                text-align: center;
+            }
+
+            .shop .hero:hover{
+                cursor:pointer;
+                background-color: #222;
+            }
+
+            th{
+                text-align: left;
+                background-color: #101610;    
+            }
+
+            tr td
+            {
+            
+                background-color: #101016;}
+
+            tr:nth-child(even) td:nth-child(odd), 
+            tr:nth-child(odd) td:nth-child(even)
+            {
+                background-color: #161010;
+            }
+
+            .footer{
+                bottom:0;
+                position: fixed;
+                width:100%;
+                background-color: #121212;
+                border-top: 5px #120612 solid;
+            }
+
+        </style>
+    </head>
+    <body>
+
+<!--         <div class="board">
+
+            <div class="hero WHO">
+                <div class="top">
+                    <div class="stars"></div>
+                    <div class="close"></div>
+                </div>
+                <div class="image">
+
+                </div>
+            </div>
+            
+        </div>
+
+
+        <div class="bench">
+
+            <div class="hero WHO">
+                <div class="top">
+                    <div class="stars"></div>
+                    <div class="close"></div>
+                </div>
+                <div class="image">
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="choices">
+            <h1>ADD HERO</h1>
+            <hr/>
+
+        </div> -->
+    
+        <!-- <div class="board">
+            <div class="hero ANTI-MAGE">
+                <div class="close">X</div> 
+                <div class="star">★★★</div>
+                <div class="name">ANTI-MAGE</div> 
+                <div class="alliance">
+                    <div class="Brawny"></div>
+                    <div class="Elusive"></div>
+                    <div class="Knight"></div>
+                </div>
+            </div>
+        </div> -->
+        <div class="header">
+            <h3>UNDERLORDstool&#128169;</h3><hr/>
+        </div>
+
+        <div class="choices shop ui">
+
+            <div class="top">
+                <hr/>
+                <input type="button" value="< Back" onclick="$('.ui').toggle()" />
+
+                Shop Level: 
+                    <select class="level" onchange="changeLevel(this.value)">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option value="11">10+</option>
+                    </select>
+                
+                <div class="filter">
+                    Filters: 
+                    Tier: 
+                    <select class="reset" onchange="filterResult('tier',this.value)">
+                        <option value="">--ANY--</option>
+                        <option value="1">Tier 1</option>
+                        <option value="2">Tier 2</option>
+                        <option value="3">Tier 3</option>
+                        <option value="4">Tier 4</option>
+                        <option value="5">Tier 5</option>
+                    </select>
+
+                    Alliance: 
+                    <select class="reset filter-alliance" onchange="filterResult('alliance',this.value)">
+                        <option value="">--ANY--</option>
+                    </select>
+
+                    <!--
+                    Search:
+                    <input class="reset" type="text" onchange="filterResult('name',this.value)"/>
+                    -->
+
+                    <input type="button" onclick="filterReset()" value="Reset"/>
+                    
+                    0 Odds:
+                    <input type="button" onclick="$('.result').toggleClass('hide0');this.value=this.value=='Show'?'Hide':'Show' " value="Show"/>
+                </div>
+                <hr/>   
+                
+            </div>
+
+
+            <div class="result hide0">
+
+            </div>
+        </div>
+
+        <div class="board ui">
+            
+
+            <table width="100%">
+                <tr>
+                    <th width="6%">
+                        Player
+                    </th>
+                    <th width="47%">
+                        Roster
+                    </th>
+                    <th width="47%">
+                        Bench
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="footer">
+            A [Very] Odd Simulator for Dota Underlords. V.0.01 © 2019
+        </div>
+    </body>
+
+</html>
